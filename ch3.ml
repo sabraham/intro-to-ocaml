@@ -15,3 +15,15 @@ let rec min_nonneg_val f n m =
       -1, 0 | -1, 1 -> midp1
     | -1, -1 -> min_nonneg_val f midp1 m
     |  _, _  -> min_nonneg_val f n mid
+
+(* Exercise 3.6 *)
+
+let empty k = 0
+
+let add dict k v =
+  let dict' k' =
+    if (k' = k) then v
+    else dict k'
+  in dict'
+
+let find dict k = dict k
