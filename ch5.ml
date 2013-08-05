@@ -63,7 +63,7 @@ let rec find_salary (name : string) (db: (string*string*float) list) : float =
 let select (pred : string * string * float -> bool) =
   let rec select' (db : ((string * string * float) list)) acc =
     match db with
-        [] -> []
+        [] -> acc
       | x::xs ->
         if pred x
         then select' xs (x::acc)
