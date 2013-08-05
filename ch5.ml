@@ -54,13 +54,11 @@ let db = ["John", "x3456", 50.1;
 
 exception Empty
 
-let find_salary (name : string) : float =
-  let rec find_salary' db (name : string) =
-    match db with
-        [] -> raise Empty
-      | (n, phone, salary)::xs ->
-        if name = n then salary else find_salary' xs name
-  in find_salary' db name
+let rec find_salary (name : string) (db: (string*string*float) list) : float =
+  match db with
+    [] -> raise Empty
+  | (n, phone, salary)::xs ->
+    if name = n then salary else find_salary name xs
 
 let select (pred : string * string * float -> bool) =
   let rec select' (db : ((string * string * float) list)) acc =
