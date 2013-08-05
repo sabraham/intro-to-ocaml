@@ -24,7 +24,7 @@ let map f l = rev [] (rev_map f [] l)
 (* Exercise 5.1 *)
 
 (1 + 2, 3, - 5) (* 3 elements *)
-"ABC", (1, "def"), ()) (* 3 elements *)
+("ABC", (1, "def"), ()) (* 3 elements *)
 (let x = 1 in x + 1, let y = 2 in y + 1, 4) (* 2 elements -- ??? *)
 
 (* Exercise 5.2 *)
