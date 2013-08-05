@@ -101,3 +101,13 @@ let rec find_crook
            | _, x, _ when x = m -> find_crook welfare bs residents
            | _, _, x when x = m -> find_crook welfare actors rs
            | _, _, _            -> raise Mystery
+
+
+(* Code Review Notes
+ * - maybe add a few more comments
+ * - better function names would be nice
+ * - I didn't look at the problems until just, so some of my suggestions may
+ *   not actually jive with the book, find_salary in particular
+ * - find_crook is a little ugly, but I couldn't find a way to clean it up
+ * - looks good for the most part
+**)
