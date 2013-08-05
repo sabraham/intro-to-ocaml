@@ -48,9 +48,9 @@ let nth i (x, y, z) =
 
       (* type: nth int -> 'a * 'a * 'a *)
 
-let db = ["John", "x3456", 50.1;
-          "Jane", "x1234", 107.3;
-          "Joan", "unlisted", 12.7]
+let database = ["John", "x3456", 50.1;
+                "Jane", "x1234", 107.3;
+                "Joan", "unlisted", 12.7]
 
 exception Empty
 
