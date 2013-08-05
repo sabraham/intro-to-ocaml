@@ -1,29 +1,29 @@
 let rec map f = function
-[] -> []
+  | [] -> []
   | x :: l -> f x :: map f l
 
 let rec assoc key = function
-(key2, value) :: l ->
-  if key2 = key then
-    value
-  else
-    assoc key l
+  | (key2, value) :: l ->
+    if key2 = key then
+      value
+    else
+      assoc key l
   | [] -> raise Not_found;;
 
 let rec rev accum = function
-h :: t -> rev (h :: accum) t
+  | h :: t -> rev (h :: accum) t
   | [] -> accum
 
 let rec rev_map f accum = function
-h :: t -> rev_map f (f h :: accum) t
+  | h :: t -> rev_map f (f h :: accum) t
   | [] -> accum
 
 let map f l = rev [] (rev_map f [] l)
 
-  (* Exercise 5.1 *)
+(* Exercise 5.1 *)
 
-  (1 + 2, 3, - 5) (* 3 elements *)
-  "ABC", (1, "def"), ()) (* 3 elements *)
+(1 + 2, 3, - 5) (* 3 elements *)
+"ABC", (1, "def"), ()) (* 3 elements *)
 (let x = 1 in x + 1, let y = 2 in y + 1, 4) (* 2 elements -- ??? *)
 
 (* Exercise 5.2 *)
