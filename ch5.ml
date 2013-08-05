@@ -1,3 +1,4 @@
+(* use the fold Luke *)
 let rec map f = function
   | [] -> []
   | x :: l -> f x :: map f l
