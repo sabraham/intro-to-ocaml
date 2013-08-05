@@ -25,7 +25,13 @@ let map f l = rev [] (rev_map f [] l)
 
 (1 + 2, 3, - 5) (* 3 elements *)
 ("ABC", (1, "def"), ()) (* 3 elements *)
-(let x = 1 in x + 1, let y = 2 in y + 1, 4) (* 2 elements -- ??? *)
+
+(* 2 elements -- 'in' essentially creates a new scope and the parser
+ *               allows us to drop parens on occassion => confusing code.
+ *               The following are equivalent *)
+(let x = 1 in x + 1, let y = 2 in y + 1, 4)
+let x = 1 in (x+1, let y = 2 in y+1, 4)
+let x = 1 in (x+1, let y = 2 in (y+1,4))
 
 (* Exercise 5.2 *)
 let f (x, y, z, w) = x + z (* f : int * 'a * int * 'b * -> int *)
