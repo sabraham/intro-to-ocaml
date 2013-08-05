@@ -85,16 +85,18 @@ let rev_concat l1 l2 =
 (* find a string in the intersection of welfare, actors, residents, which
    are all sorted lists of strings*)
 exception Mystery
+
 let rec find_crook
     (welfare : string list) (actors : string list) (residents : string list) =
   match welfare, actors, residents with
       [], _, _ | _, [], _ | _, _, [] -> raise Empty
     | w::ws, b::bs, r::rs ->
-      if w = b && w = r
-      then w
-      else let m = min (min w b) r
-           in match w, b, r with
-               x, _, _ when x = m -> find_crook ws actors residents
-             | _, x, _ when x = m -> find_crook welfare bs residents
-             | _, _, x when x = m -> find_crook welfare actors rs
-             | _, _, _ -> raise Mystery
+      if w = b && w = r then
+	w
+      else
+	let m = min (min w b) r in
+           match w, b, r with
+             x, _, _ when x = m -> find_crook ws actors residents
+           | _, x, _ when x = m -> find_crook welfare bs residents
+           | _, _, x when x = m -> find_crook welfare actors rs
+           | _, _, _            -> raise Mystery
