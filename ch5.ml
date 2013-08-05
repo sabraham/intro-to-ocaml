@@ -87,7 +87,8 @@ let rev_concat l1 l2 =
 exception Mystery
 
 let rec find_crook
-    (welfare : string list) (actors : string list) (residents : string list) =
+    (welfare : string list) (actors : string list) (residents : string list)
+    : string =
   match welfare, actors, residents with
       [], _, _ | _, [], _ | _, _, [] -> raise Empty
     | w::ws, b::bs, r::rs ->
