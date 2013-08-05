@@ -3,12 +3,12 @@ let rec map f = function
   | [] -> []
   | x :: l -> f x :: map f l
 
-let rec assoc key = function
-  | (key2, value) :: l ->
-    if key2 = key then
-      value
+let rec get key = function
+  | (k, v) :: xs ->
+    if k = key then
+      v
     else
-      assoc key l
+      get key xs
   | [] -> raise Not_found;;
 
 let rec rev accum = function
