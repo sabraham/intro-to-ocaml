@@ -60,15 +60,18 @@ let rec find_salary (name : string) (db: (string*string*float) list) : float =
   | (n, phone, salary)::xs ->
     if name = n then salary else find_salary name xs
 
-let select (pred : string * string * float -> bool) =
-  let rec select' (db : ((string * string * float) list)) acc =
-    match db with
+let select
+    (pred : string * string * float -> bool) (db: (string*string*float) list)
+    : (string*string*float) list =
+  let rec aux acc rest =
+    match rest with
         [] -> acc
       | x::xs ->
-        if pred x
-        then select' xs (x::acc)
-        else select' xs acc
-  in select' db []
+        if pred x then
+	  aux (x::acc) xs
+        else
+	  aux acc xs
+  in aux db []
 
 (* Exercise 5.7 *)
 
