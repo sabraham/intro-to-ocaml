@@ -75,12 +75,12 @@ let select
 
 (* Exercise 5.7 *)
 
-let append_tr l1 l2 =
-  let rec append_tr' l1 acc =
+let rev_concat l1 l2 =
+  let rec aux l1 acc =
     match l1 with
         [] -> acc
-      | x::xs -> append_tr' xs (x::acc)
-  in List.rev (append_tr' l1 (List.rev l2))
+      | x::xs -> aux xs (x::acc)
+  in List.rev (aux l1 (List.rev l2))
 
 (* find a string in the intersection of welfare, actors, residents, which
    are all sorted lists of strings*)
