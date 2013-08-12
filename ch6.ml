@@ -143,3 +143,24 @@ let eval = function
       | Sub -> (eval e1) - (eval e2)
       | Mul -> (eval e1) * (eval e2)
       | Div -> (eval e1) / (eval e2)
+
+(* Exercise 6.5 *)
+type ('key, 'value) dtree = Leaf | Node of 'key * 'value * ('key, 'value) dtree * ('key, 'value) dtree
+
+
+exception Empty
+let empty : ('key, 'value) dtree = Leaf
+let rec add (d : ('k, 'v) dtree) (k : 'k) (v : 'v) =   match d with
+    Leaf -> Node(k, v, Leaf, Leaf)
+  | Node(x, y, l, r) ->
+    let c = compare k x
+    in if c < 0 then Node(x, y, add l k v, r)
+      else if c > 0 then Node(x, y, l, add r k v)
+      else Node(x, v, l, r)
+let rec find (d : ('k, 'v) dtree) (k : 'k) = match d with
+    Leaf -> raise Empty
+  | Node(x, v, l, r) ->
+    let c = compare k x
+    in if c < 0 then find l k
+      else if c > 0 then find r k
+      else v
