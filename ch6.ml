@@ -8,23 +8,23 @@ Zero -> 0.0
 type 'a btree = Node of 'a * 'a btree * 'a btree | Leaf
 
 let rec cardinality = function
-    Leaf -> 0
+Leaf -> 0
   | Node (_, l, r) -> 1 + cardinality l + cardinality r
 
 let empty = Leaf
 let insert x s = Node (x, Leaf, s)
 let rec set_of_list = function
-    []   -> empty
+[]   -> empty
   | x::l -> insert x (set_of_list l)
 
 let s = set_of_list [3; 5; 7; 11; 13]
 
 let rec mem x = function
-    Leaf -> false
+Leaf -> false
   | Node (y, l, r) -> x = y || mem x l || mem x r
 
 let rec insert x = function
-    Leaf -> Node (x, Leaf, Leaf)
+Leaf -> Node (x, Leaf, Leaf)
   | Node (y, l, r) as node ->
     if x < y then
       Node (y, insert x l, r)
@@ -42,12 +42,12 @@ type color = Red | Black
 type 'a rbtree = Leaf | Node of color * 'a * 'a rbtree * 'a rbtree
 
 let rec mem x = function
-    Leaf -> false
+Leaf -> false
   | Node (_, y, l, r) ->
     x = y || (x < y && mem x l) || (x > y && mem x r)
 
 let balance = function
-    Black, z, Node (Red, y, Node (Red, x, a, b), c), d
+Black, z, Node (Red, y, Node (Red, x, a, b), c), d
   | Black, z, Node (Red, x, a, Node (Red, y, b, c)), d
   | Black, x, a, Node (Red, z, Node (Red, y, b, c), d)
   | Black, x, a, Node (Red, y, b, Node (Red, z, c, d)) ->
@@ -56,7 +56,7 @@ let balance = function
 
 let insert x s =
   let rec ins = function
-      Leaf -> Node (Red, x, Leaf, Leaf)
+  Leaf -> Node (Red, x, Leaf, Leaf)
     | Node (col, y, a, b) as s ->
       if x < y then balance (col, y, ins a, b)
       else if x > y then balance (col, y, a, ins b)
@@ -68,7 +68,7 @@ let insert x s =
 let empty = Leaf
 
 let rec set_of_list = function
-    [] -> empty
+[] -> empty
   | x::xs -> insert x (set_of_list xs)
 
 let s = set_of_list [3; 9; 5; 7; 11]
@@ -136,7 +136,7 @@ type exp =
   | Binary of exp * binop * exp
 
 let eval = function
-    Const (i) -> i
+Const (i) -> i
   | Unary (op, e) -> if op = Neg then -1 * eval e else eval e
   | Binary (e1, op, e2) -> match op with
       | Add -> (eval e1) + (eval e2)
@@ -160,7 +160,33 @@ let rec add (d : ('k, 'v) dtree) (k : 'k) (v : 'v) =   match d with
 let rec find (d : ('k, 'v) dtree) (k : 'k) = match d with
     Leaf -> raise Empty
   | Node(x, v, l, r) ->
-    let c = compare k x
-    in if c < 0 then find l k
-      else if c > 0 then find r k
-      else v
+    let c = compare k x in
+    if c < 0 then find l k
+    else if c > 0 then find r k
+    else v
+
+(* Exercise 6.6 *)
+type vertex = int
+type graph = (vertex, vertex list) dtree
+
+let reachable (g : graph) (v1 : vertex) (v2 : vertex) =
+  let filter_graph g u v =
+    add g u (List.filter (fun x -> x <> v) (find g u)) in
+  let rec reachable' g u =
+      if u = v2 then true
+      else try
+             match find g u with
+                 [] -> false
+               | vxs -> let gs = List.map (fun x -> filter_graph g u x) vxs in
+                       let paths = List.map2 reachable' gs vxs in
+                       List.fold_left (fun x y -> x || y) false paths
+        with Empty -> false in
+  if v1 <> v2
+  then reachable' g v1
+  else try
+         List.exists (fun x -> x = v2) (find g v1)
+    with Empty -> false;;
+
+(* test *)
+let gg = (add (add (add (add empty 1 [2; 3; 4]) 2 [4]) 3 [4]) 4 [5]);;
+reachable gg 2 5;;
