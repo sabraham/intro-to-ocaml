@@ -163,6 +163,37 @@ done;
 
 (* Exercise 7.2 *)
 
-type 'a deferred = unit -> 'a ;;
-let defer (d : unit -> 'a) = d;;
-let force (d : 'a deferred) : 'a = d ();;
+type 'a deferred = (unit -> 'a) * ('a option ref) ;;
+let defer (f : unit -> 'a) : 'a deferred = (f, ref None);;
+let force (d : 'a deferred) : 'a =
+  let (f, r) = d in
+  match !r with
+      None -> let res = f () in
+             r := Some res;
+             res
+    | Some res -> res
+
+(* Exercise 7.3 *)
+
+type 'a lazy_list =
+    Nil
+  | Cons of 'a * 'a lazy_list
+  | LazyCons of 'a * 'a lazy_list deferred;;
+
+let nil = Nil;;
+let cons (x : 'a) (l : 'a lazy_list) = Cons (x, l);;
+let lazy_cons (x : 'a) (l : unit -> 'a lazy_list) = LazyCons(x, l);;
+let is_nil (x : 'a) : bool = nil = x;;
+let head = function
+    Nil -> raise Empty
+  | Cons(x, _) -> x
+  | LazyCons(x, _) -> x;;
+let tail = function
+    Nil -> raise Empty
+  | Cons(_, xs) -> xs
+  | LazyCons(_, xs) -> force xs;;
+let rec (@@) (l1 : 'a lazy_list) (l2 : 'a lazy_list) = match l1 with
+    Nil -> l2
+  | Cons(x, xs) -> Cons(x, xs @@ l2)
+  | LazyCons(x, xs) -> let r = (force xs) @@ l2 in
+                      LazyCons(x, defer (fun () -> r));;
