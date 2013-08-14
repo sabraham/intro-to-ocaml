@@ -217,3 +217,27 @@ let take (q : 'a queue) = match q with
         Nil -> raise Empty
       | Cons(x, xs) -> (x, (rev xs, Nil))
       | LazyCons(x, xs) -> (x, (rev (force xs), Nil));;
+
+(* Exercise 7.5 *)
+type ('a, 'b) memo = ('a * 'b) list ref;;
+let create_memo : unit -> ('a, 'b) memo = (fun () -> ref []);;
+let memo_find (m : ('a, 'b) memo) (k : 'a) =
+  let rec find' arr k = match arr with
+    [] -> raise Empty
+  | (x, v)::xs ->
+    if k = x then v
+    else find' xs k
+  in find' !m k;;
+let memo_add (m : ('a, 'b) memo) (k : 'a) (v : 'b) =
+  m := (k, v)::!m;;
+let rec memo_fib (m : (int, int) memo) (k : int) : int = match k with
+    0 | 1 -> 1
+  | _ ->
+    try
+      memo_find m k
+    with Empty ->
+      let v = (memo_fib m (k - 1)) + (memo_fib m (k - 2)) in
+      memo_add m k v;
+      v;;
+
+let fib = memo_fib(create_memo ());;
