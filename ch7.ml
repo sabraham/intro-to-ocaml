@@ -197,3 +197,23 @@ let rec (@@) (l1 : 'a lazy_list) (l2 : 'a lazy_list) = match l1 with
   | Cons(x, xs) -> Cons(x, xs @@ l2)
   | LazyCons(x, xs) -> let r = (force xs) @@ l2 in
                       LazyCons(x, defer (fun () -> r));;
+
+(* Exercise 7.4 *)
+type 'a queue = 'a lazy_list * 'a lazy_list;;
+let rev (l : 'a lazy_list) : 'a lazy_list =
+  let rec rev' l acc = match l with
+      Nil -> Nil
+    | Cons(x, xs) -> rev' xs (Cons(x, acc))
+    | LazyCons(x, xs) -> rev' (force xs) (LazyCons(x, defer (fun () -> acc))) in
+  rev' l Nil;;
+
+let empty : 'a queue = (Nil, Nil);;
+let add (q : 'a queue) (x : 'a) : 'a queue =
+  let (f, b) = q in (f, Cons(x, b));;
+let take (q : 'a queue) = match q with
+    Cons(x, xs), b -> (x, (xs, b))
+  | LazyCons(x, xs), b -> (x, (force xs, b))
+  |  Nil, b -> match b with
+        Nil -> raise Empty
+      | Cons(x, xs) -> (x, (rev xs, Nil))
+      | LazyCons(x, xs) -> (x, (rev (force xs), Nil));;
