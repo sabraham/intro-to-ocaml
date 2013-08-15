@@ -241,3 +241,49 @@ let rec memo_fib (m : (int, int) memo) (k : int) : int = match k with
       v;;
 
 let fib = memo_fib(create_memo ());;
+
+(* Exercise 7.5 - Graph DFS *)
+type 'a vertex = Vertex of 'a * 'a vertex list ref * bool ref * int option ref;;
+type 'a edge = Edge of 'a vertex * 'a vertex;;
+type 'a directed_graph = 'a vertex list;;
+type 'a vertex_class = TreeE | ForwardE | BackE | CrossE;;
+let classify (u : 'a vertex) (v : 'a vertex) : 'a vertex_class =
+  let Vertex(_, _, v_mark, v_ind) = v in
+  if !v_ind = None then TreeE
+  else let Vertex(_, _, _, u_ind) = u in
+       if u_ind < v_ind then ForwardE
+       else match !v_mark with
+           false -> BackE
+         | true -> CrossE;;
+
+let edge_list (v : 'a vertex) (out : 'a vertex list) : 'a edge list=
+  List.map (fun x -> Edge(v, x)) out;;
+
+let dfs (l : 'a vertex list)  =
+  let rec dfs' (s : 'a edge list) (c : int ref) =
+    match s with
+        [] -> raise Empty
+      | Edge((Vertex(_, _, u_mark, u_ind) as u),
+             (Vertex(_, out_vs, _, v_ind) as v))::es ->
+        let eclass = classify u v in
+        if eclass = TreeE then
+          v_ind := Some !c;
+          c := !c + 1;
+          (match es with
+              Edge(x, y)::es' when x <> u -> u_mark := true
+            | _ -> ());
+          dfs' (es @ (edge_list v !out_vs)) c
+  in match l with
+      [] -> raise Empty
+    | (Vertex(_, out, _, u_ind) as u)::us ->
+      let c = ref 0 in
+      u_ind := Some !c;
+      c := !c + 1;
+      dfs' (edge_list u !out) c;;
+
+let test_d = Vertex("d", ref [], ref false, ref None);;
+let test_c = Vertex("c", ref [test_d], ref false, ref None);;
+let test_b = Vertex("b", ref [test_d], ref false, ref None);;
+let test_a = Vertex("a", ref [test_b; test_c], ref false, ref None);;
+let test_vs = [test_a; test_b; test_c; test_d];;
+dfs test_vs;;
