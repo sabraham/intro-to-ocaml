@@ -97,3 +97,33 @@ let empty : ('key, 'value) dictionary =
      find = (fun (k' : 'key) -> if k' = k then v else find k')} in
   {insert = insert;
    find = find};;
+
+(* Exercise 8.4 *)
+type blob = {
+  get  : unit -> float * float;
+  area : unit -> float;
+  set  : float * float -> unit;
+  move : float * float -> unit
+};;
+
+let new_rectangle x y w h =
+  let pos = ref (x,y) in
+  let rec r = {
+    get = (fun () -> !pos);
+    area = (fun () -> w *. h);
+    set = (fun loc -> pos := loc);
+    move = (fun (dx, dy) -> let (x, y) = r.get() in
+                           r.set (x +. dx, y +. dy))
+  } in
+  r;;
+
+let rect1 = new_rectangle 0.0 0.0 1.0 1.0;;
+rect1.move (1.3, 3.4);;
+let rect2 = {rect1 with set = (fun _ -> ())};;
+rect2.move(3.0, 4.0);;
+rect2.get();; (* rect2 changed *)
+let rect2 = {rect1 with set = (fun _ -> ()); move = (fun _ -> ())};;
+rect2.move (3.0, 4.0);;
+rect2.get();; (* rect2 did not change *)
+rect1.set(3.0, 4.0);;
+rect2.get();; (* rect2 changed *)
