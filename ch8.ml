@@ -139,3 +139,31 @@ let string_reverse (s : string) : unit =
   for i = 0 to (l / 2) do
     cswap s i (l - i)
   done;;
+
+(* Exercise 8.6 *)
+let blit src src_off dst dst_off len =
+  for i = 0 to len - 1 do
+    dst.(dst_off + i) <- src.(src_off + i)
+  done;;
+
+(* when the array indices are off, an error is thrown only when it his the invalid index;
+   this is problematic b.c the array has already been altered. we would like the check to
+   occur before any destructive update. *)
+
+(* Exercise 8.7 *)
+
+let insert  (a : 'a array) (i : int) : unit =
+  let x = a.(i) in
+  let j = ref (i - 1) in
+  while (!j > 0 && a.(!j) > x) do
+    a.(!j) <- a.(!j - 1);
+    j := !j - 1;
+  done;
+  a.(!j + 1) <- x;;
+
+let insertion_sort (a : 'a array) =
+  let i = ref 1 in
+  while !i < Array.length a do
+    insert a !i;
+    i := !i + 1
+  done;;
