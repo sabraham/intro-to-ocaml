@@ -127,3 +127,15 @@ rect2.move (3.0, 4.0);;
 rect2.get();; (* rect2 did not change *)
 rect1.set(3.0, 4.0);;
 rect2.get();; (* rect2 changed *)
+
+(* Exercise 8.5 *)
+let string_reverse (s : string) : unit =
+  let l = String.length s - 1 in
+  let cxor x y = Char.chr ((Char.code x) lxor (Char.code y)) in
+  let cswap s i j =
+    s.[i] <- cxor s.[i] s.[j];
+    s.[j] <- cxor s.[i] s.[j];
+    s.[i] <- cxor s.[i] s.[j]; in
+  for i = 0 to (l / 2) do
+    cswap s i (l - i)
+  done;;
